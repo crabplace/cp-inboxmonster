@@ -1,0 +1,21 @@
+import { imFetch, respond, handleOptions } from "./utils/api.js";
+
+// GET /engagement
+// Query params:
+//   ?id=<id>
+//   ?limit=25
+//   ?page=1
+
+export const handler = async (event) => {
+  if (event.httpMethod === "OPTIONS") return handleOptions();
+
+  try {
+    const { id, limit = 25, page = 1 } = event.queryStringParameters || {};
+
+    const path = id ? `/engagement/${id}` : `/engagement?limit=${limit}&page=${page}`;
+    const result = await imFetch(path);
+    return respond(result.status, result.data);
+  } catch (err) {
+    return respond(500, { success: false, message: err.message });
+  }
+};
